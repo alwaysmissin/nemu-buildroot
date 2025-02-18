@@ -1,0 +1,64 @@
+/dts-v1/;
+
+
+/ {
+	compatible = "ysyx,jiunian-nemu";
+	model = "ysyx,jiunian-nemu";
+	#address-cells = <0x1>;
+	#size-cells = <0x1>;
+	chosen {
+		bootargs = "earlycon=uart8250,mmio,0x10000000,1000000 console=ttyS0";
+	};
+
+	cpus {
+		#address-cells = <0x1>;
+		#size-cells = <0x0>;
+		timebase-frequency = <1000000>;
+		cpu@0 {
+			phandle = <0x1>;
+			device_type = "cpu";
+			compatible = "ysyx,nemu", "riscv";
+			reg = <0x0>;
+			status = "okay";
+
+			cpu0_intc: interrupt-controller {
+				phandle = <0x2>;
+				#interrupt-cells = <0x1>;
+        #address-cells = <0x0>;
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+			};
+		};
+	};
+
+	memory@80000000 {
+		device_type = "memory";
+		reg = <0x80000000 0x07ffffff>;
+	};
+
+	clint0: clint@2000000 {
+		compatible = "riscv,clint0";
+		reg = <0x02000000 0x10000>;
+		interrupts-extended = <&cpu0_intc 0x3 &cpu0_intc 0x7>;
+	};
+
+	plic0: interrupt-controller@c000000{
+		phandle = <0x3>;
+		compatible = "riscv,plic0";
+		interrupts-extended = <&cpu0_intc 0x11>;
+    interrupt-controller;
+    #interrupt-cells = <0x1>;
+    #address-cells = <0x0>;
+		reg = <0x0c000000 0x10000>;
+    riscv,ndev = <1>;
+	};
+
+	uart0: uart@10000000{
+		compatible = "ysyx,nemu-uart", "ns16550";
+		clock-frequency = <0x1000000>;
+		reg = <0x10000000 0x1000>;
+    interrupt-parent = <&plic0>;
+    interrupts = <1>;
+	};
+
+};
