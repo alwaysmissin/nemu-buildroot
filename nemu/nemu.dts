@@ -61,8 +61,8 @@
 		compatible = "sifive,uart0", "ysyx,nemu-uart", "ns16550";
 		clock-frequency = <1000000>;
 		reg = <0x10000000 0x1000>;
-    interrupt-parent = <&plic0>;
-    interrupts = <10>;
+    // interrupt-parent = <&plic0>;
+    // interrupts = <10>;
 	};
 
 };
